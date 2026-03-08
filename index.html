@@ -113,8 +113,8 @@
         <h1 style="color: #f57c00; margin: 5px 0 15px 0;">和諧達成！</h1>
         <p style="font-size: 18px; color: #333; line-height: 1.6; margin-bottom: 30px;">
             <b>太棒了！家裡的火藥味消失了！</b><br>
-            你成功使用了「恭敬心」潤滑劑 [cite: 6]，<br>
-            媽媽現在是你的<b>「神隊友」</b> [cite: 17, 18]，<br>
+            你成功使用了「恭敬心」潤滑劑，<br>
+            媽媽現在是你的<b>「神隊友」</b>，<br>
             要跟你一起去客廳找金色筆囉！
         </p>
         <button onclick="location.reload()" style="background: var(--success-green); color: white; width: 80%;">再挑戰一次</button>
@@ -128,6 +128,7 @@
     const dialogText = document.getElementById('dialog-text');
     const gameContainer = document.getElementById('game-container');
 
+    // 初始化摩擦火花
     function initSparks() {
         sparksContainer.innerHTML = '';
         for(let i=0; i<8; i++) {
@@ -144,7 +145,7 @@
     function goToStep2() {
         document.getElementById('step1-controls').classList.add('hidden');
         document.getElementById('step2-controls').classList.remove('hidden');
-        dialogText.innerText = "媽媽說：如果你對著最尊敬的人說話，會用剛才那個語氣嗎？ [cite: 15]";
+        dialogText.innerText = "媽媽說：如果你對著最尊敬的人說話，會用剛才那個語氣嗎？";
         charEmoji.innerText = "🤔";
     }
 
@@ -155,7 +156,7 @@
         charEmoji.innerText = heroName === '校長' ? '👨‍💼' : '🦸‍♂️';
         scene.style.backgroundColor = "#fff9c4"; 
         sparksContainer.innerHTML = ''; 
-        dialogText.innerText = "當你有了「恭敬心」，世界會變得很不一樣喔！你會怎麼開口呢？ [cite: 23]";
+        dialogText.innerText = "當你有了「恭敬心」，世界會變得很不一樣喔！你會怎麼開口呢？";
     }
 
     function checkAnswer(isCorrect) {
@@ -168,6 +169,7 @@
 
     function startCelebration() {
         document.getElementById('celebration-overlay').classList.remove('hidden');
+        // 產生彩色紙屑
         for(let i=0; i<50; i++) {
             setTimeout(() => {
                 const c = document.createElement('div');
