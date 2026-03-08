@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>英雄變裝鏡：轉念大挑戰</title>
+    <style>
+        :root {
+            --primary-gold: #ffd700;
+            --danger-red: #ff4d4d;
+            --peace-blue: #a2d2ff;
+        }
+        body {
+            font-family: "Microsoft JhengHei", sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+        #game-container {
+            width: 375px;
+            height: 667px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            text-align: center;
+        }
+        .header { font-weight: bold; color: #555; margin-bottom: 10px; }
+        #scene-image {
+            width: 100%;
+            height: 250px;
+            background-color: #eee;
+            border-radius: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 50px;
+            position: relative;
+            transition: all 0.5s;
+        }
+        .spark {
+            position: absolute;
+            color: var(--danger-red);
+            font-size: 20px;
+            animation: flash 0.5s infinite;
+        }
+        @keyframes flash { 0% { opacity: 0; } 50% { opacity: 1; } 100% { opacity: 0; } }
+        
+        #dialog-box {
+            margin-top: 20px;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            min-height: 80px;
+            background: #fff;
+        }
+        .controls {
+            margin-top: auto;
+            display: grid;
+            gap: 10px;
+        }
+        button {
+            padding: 12px;
+            border: none;
+            border-radius: 25px;
+            background: var(--peace-blue);
+            cursor: pointer;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+        button:hover { filter: brightness(0.9); }
+        .hero-btn { background: var(--primary-gold); color: #333; font-weight: bold; }
+        .hidden { display: none; }
+        
+        #result-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255,255,255,0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 20px;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body>
+
+<div id="game-container">
+    <div class="header">英雄變裝鏡：轉念大挑戰</div>
+    
+    <div id="scene-image">
+        <span id="char-emoji">😫</span>
+        <div id="sparks-container"></div>
+    </div>
+
+    <div id="dialog-box">
+        <p id="dialog-text">厚！媽媽！你是不是弄丟我的金色彩色筆了！你每次都亂動我東西！ </p>
+    </div>
+
+    <div id="step1-controls" class="controls">
+        <p>出現摩擦火花了！趕快使用「英雄變裝鏡」！</p>
+        <button class="hero-btn" onclick="transformHero()">✨ 開啟角色替換鏡</button>
+    </div>
+
+    <div id="step2-controls" class="controls hidden">
+        <p>選擇你要變身的對象： [cite: 15]</p>
+        <button onclick="chooseHero('校長')">👨‍💼 尊敬的校長</button>
+        <button onclick="chooseHero('超人')">🦸‍♂️ 超人英雄</button>
+    </div>
+
+    <div id="step3-controls" class="controls hidden">
+        <p>現在你是 <span id="current-hero"></span>，你會怎麼說？</p>
+        <button onclick="checkAnswer(false)">「快把筆交出來！」</button>
+        <button onclick="checkAnswer(true)">「請幫幫我，我找不到筆了。」 [cite: 16, 18]</button>
+    </div>
+
+    <div id="result-overlay" class="hidden">
+        <h2 id="result-title">恭喜成功！</h2>
+        <p id="result-msg"></p>
+        <button onclick="resetGame()">再玩一次</button>
+    </div>
+</div>
+
+<script>
+    const sparksContainer = document.getElementById('sparks-container');
+    const scene = document.getElementById('scene-image');
+    const charEmoji = document.getElementById('char-emoji');
+    const dialogText = document.getElementById('dialog-text');
+
+    // 產生火花特效
+    function createSparks() {
+        sparksContainer.innerHTML = '';
+        for(let i=0; i<5; i++) {
+            const span = document.createElement('span');
+            span.className = 'spark';
+            span.innerText = '💥';
+            span.style.left = Math.random() * 80 + '%';
+            span.style.top = Math.random() * 80 + '%';
+            sparksContainer.appendChild(span);
+        }
+    }
+    createSparks();
+
+    function transformHero() {
+        document.getElementById('step1-controls').classList.add('hidden');
+        document.getElementById('step2-controls').classList.remove('hidden');
+        dialogText.innerText = "你想想看，如果你現在是對著你最敬畏的人說話... [cite: 15]";
+    }
+
+    function chooseHero(type) {
+        document.getElementById('step2-controls').classList.add('hidden');
+        document.getElementById('step3-controls').classList.remove('hidden');
+        document.getElementById('current-hero').innerText = type;
+        
+        charEmoji.innerText = type === '校長' ? '👨‍💼' : '🦸‍♂️';
+        scene.style.backgroundColor = '#fff9c4'; // 變金色
+        sparksContainer.innerHTML = ''; // 火花消失
+    }
+
+    function checkAnswer(isCorrect) {
+        const overlay = document.getElementById('result-overlay');
+        const title = document.getElementById('result-title');
+        const msg = document.getElementById('result-msg');
+        
+        overlay.classList.remove('hidden');
+        if(isCorrect) {
+            title.innerText = "🌟 和諧達成！";
+            msg.innerText = "這就是「恭敬心」。你從敵人變成了隊友！ [cite: 17, 18]";
+            scene.style.backgroundColor = '#c8e6c9';
+        } else {
+            title.innerText = "🧨 火花又冒出來了";
+            msg.innerText = "即換了裝，語氣不對還是會產生摩擦喔。 [cite: 17]";
+            scene.style.backgroundColor = '#ffcdd2';
+        }
+    }
+
+    function resetGame() {
+        location.reload();
+    }
+</script>
+
+</body>
+</html>
