@@ -13,89 +13,57 @@
         body {
             font-family: "Microsoft JhengHei", sans-serif;
             background-color: #f0f2f5;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            overflow: hidden;
+            display: flex; justify-content: center; align-items: center;
+            height: 100vh; margin: 0; overflow: hidden;
         }
         #game-container {
-            width: 375px;
-            height: 667px;
-            background: white;
-            border-radius: 20px;
+            width: 350px; height: 600px;
+            background: white; border-radius: 20px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            padding: 20px;
-            text-align: center;
+            position: relative; display: flex; flex-direction: column;
+            padding: 20px; text-align: center;
         }
-        .header { font-weight: bold; color: #555; margin-bottom: 10px; }
         #scene-image {
-            width: 100%;
-            height: 250px;
-            background-color: #eee;
-            border-radius: 15px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 50px;
-            position: relative;
-            transition: all 0.5s;
+            width: 100%; height: 200px;
+            background-color: #ffebee; border-radius: 15px;
+            display: flex; justify-content: center; align-items: center;
+            font-size: 60px; position: relative; transition: 0.5s;
         }
         .spark {
-            position: absolute;
-            color: var(--danger-red);
-            font-size: 20px;
-            animation: flash 0.5s infinite;
+            position: absolute; font-size: 24px;
+            animation: flash 0.6s infinite;
         }
-        @keyframes flash { 0% { opacity: 0; } 50% { opacity: 1; } 100% { opacity: 0; } }
+        @keyframes flash { 0% { opacity: 0; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1.2); } 100% { opacity: 0; transform: scale(0.8); } }
         
         #dialog-box {
-            margin-top: 20px;
-            padding: 15px;
-            border: 2px solid #ddd;
-            border-radius: 10px;
-            min-height: 80px;
-            background: #fff;
+            margin: 20px 0; padding: 15px;
+            border: 2px solid #eee; border-radius: 10px;
+            min-height: 100px; background: #fafafa;
+            font-size: 18px; line-height: 1.6;
         }
-        .controls {
-            margin-top: auto;
-            display: grid;
-            gap: 10px;
-        }
+        .controls { display: flex; flex-direction: column; gap: 12px; }
         button {
-            padding: 12px;
-            border: none;
-            border-radius: 25px;
-            background: var(--peace-blue);
-            cursor: pointer;
-            font-size: 16px;
-            transition: 0.3s;
+            padding: 15px; border: none; border-radius: 30px;
+            background: var(--peace-blue); cursor: pointer;
+            font-size: 16px; font-weight: bold; transition: 0.2s;
         }
-        button:hover { filter: brightness(0.9); }
-        .hero-btn { background: var(--primary-gold); color: #333; font-weight: bold; }
-        .hidden { display: none; }
+        button:hover { transform: translateY(-2px); filter: brightness(0.9); }
+        .hero-btn { background: var(--primary-gold); color: #444; }
+        .hidden { display: none !important; }
         
         #result-overlay {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(255,255,255,0.9);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            border-radius: 20px;
-            z-index: 10;
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255,255,255,0.95);
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            border-radius: 20px; z-index: 100; padding: 20px;
         }
     </style>
 </head>
 <body>
 
 <div id="game-container">
-    <div class="header">英雄變裝鏡：轉念大挑戰</div>
+    <div style="font-size: 14px; color: #888; margin-bottom: 10px;">心靈的神奇潤滑劑</div>
     
     <div id="scene-image">
         <span id="char-emoji">😫</span>
@@ -103,30 +71,29 @@
     </div>
 
     <div id="dialog-box">
-        <p id="dialog-text">厚！媽媽！你是不是弄丟我的金色彩色筆了！你每次都亂動我東西！ </p>
+        <p id="dialog-text">厚！媽媽！你是不是弄丟我的金色彩色筆了！你每次都亂動我東西！</p>
     </div>
 
     <div id="step1-controls" class="controls">
-        <p>出現摩擦火花了！趕快使用「英雄變裝鏡」！</p>
-        <button class="hero-btn" onclick="transformHero()">✨ 開啟角色替換鏡</button>
+        <button class="hero-btn" onclick="goToStep2()">✨ 使用「英雄變裝鏡」轉念</button>
     </div>
 
     <div id="step2-controls" class="controls hidden">
-        <p>選擇你要變身的對象： [cite: 15]</p>
-        <button onclick="chooseHero('校長')">👨‍💼 尊敬的校長</button>
+        <p style="color: #666;">想像你要對誰說話？</p>
+        <button onclick="chooseHero('校長')">👨‍💼 敬愛的校長</button>
         <button onclick="chooseHero('超人')">🦸‍♂️ 超人英雄</button>
     </div>
 
     <div id="step3-controls" class="controls hidden">
-        <p>現在你是 <span id="current-hero"></span>，你會怎麼說？</p>
-        <button onclick="checkAnswer(false)">「快把筆交出來！」</button>
-        <button onclick="checkAnswer(true)">「請幫幫我，我找不到筆了。」 [cite: 16, 18]</button>
+        <p style="color: #666;">換成 <span id="current-hero" style="font-weight:bold;"></span> 的語氣：</p>
+        <button onclick="showResult(false)">「快把筆交出來！」</button>
+        <button onclick="showResult(true)">「請幫幫我，我找不到筆了。」</button>
     </div>
 
     <div id="result-overlay" class="hidden">
-        <h2 id="result-title">恭喜成功！</h2>
-        <p id="result-msg"></p>
-        <button onclick="resetGame()">再玩一次</button>
+        <h2 id="result-title"></h2>
+        <p id="result-msg" style="margin: 20px 0; color: #555;"></p>
+        <button onclick="location.reload()" style="background: #eee;">重新練習轉念</button>
     </div>
 </div>
 
@@ -136,10 +103,10 @@
     const charEmoji = document.getElementById('char-emoji');
     const dialogText = document.getElementById('dialog-text');
 
-    // 產生火花特效
-    function createSparks() {
+    // 初始火花
+    function initSparks() {
         sparksContainer.innerHTML = '';
-        for(let i=0; i<5; i++) {
+        for(let i=0; i<6; i++) {
             const span = document.createElement('span');
             span.className = 'spark';
             span.innerText = '💥';
@@ -148,43 +115,41 @@
             sparksContainer.appendChild(span);
         }
     }
-    createSparks();
+    initSparks();
 
-    function transformHero() {
+    function goToStep2() {
         document.getElementById('step1-controls').classList.add('hidden');
         document.getElementById('step2-controls').classList.remove('hidden');
-        dialogText.innerText = "你想想看，如果你現在是對著你最敬畏的人說話... [cite: 15]";
+        dialogText.innerText = "「你想想看，如果你現在是對著校長或超人說話，你會用剛才那個語氣嗎？」";
+        charEmoji.innerText = "🤔";
     }
 
-    function chooseHero(type) {
+    function chooseHero(heroName) {
         document.getElementById('step2-controls').classList.add('hidden');
         document.getElementById('step3-controls').classList.remove('hidden');
-        document.getElementById('current-hero').innerText = type;
+        document.getElementById('current-hero').innerText = heroName;
         
-        charEmoji.innerText = type === '校長' ? '👨‍💼' : '🦸‍♂️';
-        scene.style.backgroundColor = '#fff9c4'; // 變金色
-        sparksContainer.innerHTML = ''; // 火花消失
+        charEmoji.innerText = heroName === '校長' ? '👨‍💼' : '🦸‍♂️';
+        scene.style.backgroundColor = "#fff9c4"; // 變金色
+        sparksContainer.innerHTML = ''; // 火花暫時消失
+        dialogText.innerText = "當你把對方當成重要的人，你會怎麼說出請求？";
     }
 
-    function checkAnswer(isCorrect) {
+    function showResult(isCorrect) {
         const overlay = document.getElementById('result-overlay');
-        const title = document.getElementById('result-title');
-        const msg = document.getElementById('result-msg');
-        
         overlay.classList.remove('hidden');
+        
         if(isCorrect) {
-            title.innerText = "🌟 和諧達成！";
-            msg.innerText = "這就是「恭敬心」。你從敵人變成了隊友！ [cite: 17, 18]";
-            scene.style.backgroundColor = '#c8e6c9';
+            document.getElementById('result-title').innerText = "🌟 和諧達成！";
+            document.getElementById('result-msg').innerText = "這就是「恭敬心」。你成功把指責換成了請求，家裡的火藥味消失了！";
+            scene.style.backgroundColor = "#c8e6c9";
+            charEmoji.innerText = "😊";
         } else {
-            title.innerText = "🧨 火花又冒出來了";
-            msg.innerText = "即換了裝，語氣不對還是會產生摩擦喔。 [cite: 17]";
-            scene.style.backgroundColor = '#ffcdd2';
+            document.getElementById('result-title').innerText = "🧨 火花又冒出來了";
+            document.getElementById('result-msg').innerText = "即換了裝，語氣不對還是會產生摩擦喔。再試一次看看「轉念」的力量！";
+            scene.style.backgroundColor = "#ffcdd2";
+            charEmoji.innerText = "😠";
         }
-    }
-
-    function resetGame() {
-        location.reload();
     }
 </script>
 
