@@ -67,10 +67,10 @@
         .medal { font-size: 80px; margin-bottom: 10px; animation: bounce 1s infinite; }
         @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
 
-        /* 紙屑特效 */
         .confetti {
-            position: absolute; width: 10px; height: 10px; background: red;
+            position: absolute; width: 10px; height: 10px;
             animation: fall 3s linear forwards;
+            pointer-events: none;
         }
         @keyframes fall { to { transform: translateY(600px) rotate(360deg); opacity: 0; } }
     </style>
@@ -86,7 +86,7 @@
     </div>
 
     <div id="dialog-box">
-        <p id="dialog-text">厚！媽媽！你是不是弄丟我的金色彩色筆了！你每次都亂動我東西！ [cite: 10]</p>
+        <p id="dialog-text">厚！媽媽！你是不是弄丟我的金色彩色筆了！你每次都亂動我東西！</p>
     </div>
 
     <div id="step1-controls" class="controls">
@@ -94,24 +94,24 @@
     </div>
 
     <div id="step2-controls" class="controls hidden">
-        <p style="color: #666;">想像你要對誰說話？ [cite: 15]</p>
-        <button onclick="chooseHero('校長')">👨‍💼 敬愛的校長 [cite: 15]</button>
-        <button onclick="chooseHero('超人')">🦸‍♂️ 超人英雄 [cite: 15]</button>
+        <p style="color: #666;">想像你要對誰說話？</p>
+        <button onclick="chooseHero('校長')">👨‍💼 敬愛的校長</button>
+        <button onclick="chooseHero('超人')">🦸‍♂️ 超人英雄</button>
     </div>
 
     <div id="step3-controls" class="controls hidden">
         <p style="color: #666;">身為 <span id="current-hero" style="font-weight:bold; color:orange;"></span>，你會怎麼說？</p>
         <button onclick="checkAnswer(false)">「快把筆給我！」</button>
-        <button onclick="checkAnswer(true)">「請幫幫我，我找不到筆了。」 [cite: 16]</button>
+        <button onclick="checkAnswer(true)">「請幫幫我，我找不到筆了。」</button>
     </div>
 
     <div id="celebration-overlay" class="hidden">
         <div class="medal">🏆</div>
         <h1 style="color: #f57c00; margin: 10px 0;">和諧達成！</h1>
         <p style="font-size: 18px; color: #333; line-height: 1.6;">
-            <b>恭喜你！家裡的火藥味消失了！</b> <br>
-            你成功使用了「恭敬心」潤滑劑 [cite: 6]<br>
-            減少了摩擦，讓媽媽變成你的「隊友」！ [cite: 17, 21]
+            <b>恭喜你！家裡的火藥味消失了！</b><br>
+            你成功使用了「恭敬心」潤滑劑<br>
+            減少了摩擦，讓媽媽變成你的「隊友」！
         </p>
         <div style="background: white; padding: 10px 20px; border-radius: 15px; border: 2px dashed #ffd700; margin: 15px 0;">
             🎖️ 獲得獎勵：<b>【轉念小大師】勳章</b>
@@ -127,6 +127,7 @@
     const dialogText = document.getElementById('dialog-text');
     const gameContainer = document.getElementById('game-container');
 
+    // 產生摩擦火花
     function initSparks() {
         sparksContainer.innerHTML = '';
         for(let i=0; i<8; i++) {
@@ -143,7 +144,7 @@
     function goToStep2() {
         document.getElementById('step1-controls').classList.add('hidden');
         document.getElementById('step2-controls').classList.remove('hidden');
-        dialogText.innerText = "媽媽說：如果你對著最尊敬的人，會用剛才那個語氣嗎？ [cite: 15]";
+        dialogText.innerText = "媽媽說：如果你對著最尊敬的人說話，會用剛才那個語氣嗎？";
         charEmoji.innerText = "🤔";
     }
 
@@ -154,26 +155,27 @@
         charEmoji.innerText = heroName === '校長' ? '👨‍💼' : '🦸‍♂️';
         scene.style.backgroundColor = "#fff9c4"; 
         sparksContainer.innerHTML = ''; 
-        dialogText.innerText = "當你有了「恭敬心」，你會怎麼開口呢？ [cite: 17]";
+        dialogText.innerText = "當你有了「恭敬心」，世界會變得很不一樣喔！你會怎麼開口呢？";
     }
 
     function checkAnswer(isCorrect) {
         if(isCorrect) {
             startCelebration();
         } else {
-            alert("哎呀！火花又冒出來了！再想一下，英雄會怎麼有禮貌地請求呢？");
+            alert("哎呀！火花又冒出來了！再想一下，換個尊敬的語氣試試看？");
         }
     }
 
     function startCelebration() {
         document.getElementById('celebration-overlay').classList.remove('hidden');
-        // 產生紙屑
+        // 產生彩色紙屑特效
         for(let i=0; i<50; i++) {
             setTimeout(() => {
                 const c = document.createElement('div');
                 c.className = 'confetti';
                 c.style.left = Math.random() * 100 + '%';
-                c.style.backgroundColor = ['#ffd700', '#ff4081', '#00e676', '#2979ff'][Math.floor(Math.random()*4)];
+                c.style.top = "-10px";
+                c.style.backgroundColor = ['#ffd700', '#ff4081', '#00e676', '#2979ff', '#ff9100'][Math.floor(Math.random()*5)];
                 gameContainer.appendChild(c);
                 setTimeout(() => c.remove(), 3000);
             }, i * 50);
