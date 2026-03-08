@@ -8,6 +8,7 @@
         :root {
             --primary-gold: #ffd700;
             --danger-red: #ff4d4d;
+            --lava-orange: #ff5722;
             --peace-blue: #a2d2ff;
             --success-green: #4caf50;
         }
@@ -23,6 +24,7 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
             position: relative; display: flex; flex-direction: column;
             padding: 20px; text-align: center;
+            transition: transform 0.1s;
         }
         #scene-image {
             width: 100%; height: 180px;
@@ -53,6 +55,27 @@
         .hero-btn { background: var(--primary-gold); color: #444; }
         .hidden { display: none !important; }
         
+        /* 火山爆發特效 (選錯時) */
+        .volcano-active {
+            animation: shake 0.2s infinite;
+            background-color: #331111 !important;
+        }
+        @keyframes shake {
+            0% { transform: translate(1px, 1px) rotate(0deg); }
+            20% { transform: translate(-3px, 0px) rotate(-1deg); }
+            40% { transform: translate(3px, 2px) rotate(1deg); }
+            60% { transform: translate(1px, -1px) rotate(1deg); }
+            80% { transform: translate(-1px, 2px) rotate(-1deg); }
+            100% { transform: translate(1px, -2px) rotate(0deg); }
+        }
+        #volcano-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255, 0, 0, 0.4);
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            z-index: 150; border-radius: 20px; pointer-events: none;
+        }
+
+        /* 慶祝大畫面 (選對時) */
         #celebration-overlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: linear-gradient(135deg, #fff9c4 0%, #ffffff 100%);
@@ -63,18 +86,10 @@
         }
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
         
-        .super-mom {
-            font-size: 100px;
-            margin-bottom: 20px;
-            animation: float 2s infinite ease-in-out;
-        }
+        .super-mom { font-size: 100px; margin-bottom: 20px; animation: float 2s infinite ease-in-out; }
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
 
-        .confetti {
-            position: absolute; width: 10px; height: 10px;
-            animation: fall 3s linear forwards;
-            pointer-events: none;
-        }
+        .confetti { position: absolute; width: 10px; height: 10px; animation: fall 3s linear forwards; pointer-events: none; }
         @keyframes fall { to { transform: translateY(600px) rotate(360deg); opacity: 0; } }
     </style>
 </head>
@@ -108,16 +123,21 @@
         <button onclick="checkAnswer(true)">「請幫幫我，我找不到筆了。」</button>
     </div>
 
+    <div id="volcano-overlay" class="hidden">
+        <div style="font-size: 100px;">🌋</div>
+        <h1 style="color: white; text-shadow: 2px 2px 5px black;">火山爆發！</h1>
+        <p style="color: white; font-weight: bold;">火藥味太重了！</p>
+    </div>
+
     <div id="celebration-overlay" class="hidden">
         <div class="super-mom">👩‍🎤👍</div>
         <h1 style="color: #f57c00; margin: 5px 0 15px 0;">和諧達成！</h1>
         <p style="font-size: 18px; color: #333; line-height: 1.6; margin-bottom: 30px;">
             <b>太棒了！家裡的火藥味消失了！</b><br>
             你成功使用了「恭敬心」潤滑劑，<br>
-            媽媽現在是你的<b>「神隊友」</b>，<br>
-            要跟你一起去客廳找金色筆囉！
+            媽媽現在是你的<b>「神隊友」</b>！
         </p>
-        <button onclick="location.reload()" style="background: var(--success-green); color: white; width: 80%;">再挑戰一次</button>
+        <button onclick="location.reload()" style="background: var(--success-green); color: white; width: 80%;">再練習一次</button>
     </div>
 </div>
 
@@ -127,8 +147,8 @@
     const charEmoji = document.getElementById('char-emoji');
     const dialogText = document.getElementById('dialog-text');
     const gameContainer = document.getElementById('game-container');
+    const volcanoOverlay = document.getElementById('volcano-overlay');
 
-    // 初始化摩擦火花
     function initSparks() {
         sparksContainer.innerHTML = '';
         for(let i=0; i<8; i++) {
@@ -156,20 +176,34 @@
         charEmoji.innerText = heroName === '校長' ? '👨‍💼' : '🦸‍♂️';
         scene.style.backgroundColor = "#fff9c4"; 
         sparksContainer.innerHTML = ''; 
-        dialogText.innerText = "當你有了「恭敬心」，世界會變得很不一樣喔！你會怎麼開口呢？";
+        dialogText.innerText = "當你有了「恭敬心」，你會怎麼開口呢？";
     }
 
     function checkAnswer(isCorrect) {
         if(isCorrect) {
             startCelebration();
         } else {
-            alert("哎呀！火花又冒出來了！再想一下，換個尊敬的語氣試試看？");
+            triggerVolcano();
         }
+    }
+
+    function triggerVolcano() {
+        // 啟動火山效果
+        gameContainer.classList.add('volcano-active');
+        volcanoOverlay.classList.remove('hidden');
+        charEmoji.innerText = "🌋";
+        
+        // 3秒後自動恢復，讓孩子可以重選
+        setTimeout(() => {
+            gameContainer.classList.remove('volcano-active');
+            volcanoOverlay.classList.add('hidden');
+            charEmoji.innerText = "🤔";
+            alert("哎呀！語氣太兇了，火爆的摩擦引發了火山爆發！再試試看溫柔的恭敬語氣？");
+        }, 2500);
     }
 
     function startCelebration() {
         document.getElementById('celebration-overlay').classList.remove('hidden');
-        // 產生彩色紙屑
         for(let i=0; i<50; i++) {
             setTimeout(() => {
                 const c = document.createElement('div');
