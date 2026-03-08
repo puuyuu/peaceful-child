@@ -64,8 +64,25 @@
         }
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
         
-        .medal { font-size: 80px; margin-bottom: 20px; animation: bounce 1s infinite; }
-        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        /* 媽媽神隊友樣式 */
+        .super-mom {
+            font-size: 90px;
+            margin-bottom: 10px;
+            position: relative;
+            animation: float 2s infinite ease-in-out;
+        }
+        /* 披風效果 */
+        .super-mom::after {
+            content: '💃'; /* 用這個 emoji 模擬披風飛揚 */
+            position: absolute;
+            font-size: 60px;
+            left: -30px;
+            top: 10px;
+            opacity: 0.8;
+            transform: rotate(-20deg);
+        }
+        
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
 
         .confetti {
             position: absolute; width: 10px; height: 10px;
@@ -106,12 +123,13 @@
     </div>
 
     <div id="celebration-overlay" class="hidden">
-        <div class="medal">🌟</div>
-        <h1 style="color: #f57c00; margin: 10px 0;">和諧達成！</h1>
+        <div class="super-mom">👩‍🎤👍</div>
+        <h1 style="color: #f57c00; margin: 5px 0 15px 0;">和諧達成！</h1>
         <p style="font-size: 18px; color: #333; line-height: 1.6; margin-bottom: 30px;">
             <b>太棒了！家裡的火藥味消失了！</b><br>
-            你成功使用了「恭敬心」潤滑劑<br>
-            減少了摩擦，讓媽媽變成你的「隊友」！
+            你成功使用了「恭敬心」潤滑劑，<br>
+            媽媽現在是你的<b>「神隊友」</b>，<br>
+            要跟你一起去客廳找金色筆囉！
         </p>
         <button onclick="location.reload()" style="background: var(--success-green); color: white; width: 80%;">再挑戰一次</button>
     </div>
