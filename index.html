@@ -9,6 +9,7 @@
             --primary-gold: #ffd700;
             --danger-red: #ff4d4d;
             --peace-blue: #a2d2ff;
+            --success-green: #4caf50;
         }
         body {
             font-family: "Microsoft JhengHei", sans-serif;
@@ -24,10 +25,10 @@
             padding: 20px; text-align: center;
         }
         #scene-image {
-            width: 100%; height: 200px;
+            width: 100%; height: 180px;
             background-color: #ffebee; border-radius: 15px;
             display: flex; justify-content: center; align-items: center;
-            font-size: 60px; position: relative; transition: 0.5s;
+            font-size: 70px; position: relative; transition: 0.5s;
         }
         .spark {
             position: absolute; font-size: 24px;
@@ -38,32 +39,46 @@
         #dialog-box {
             margin: 20px 0; padding: 15px;
             border: 2px solid #eee; border-radius: 10px;
-            min-height: 100px; background: #fafafa;
-            font-size: 18px; line-height: 1.6;
+            min-height: 120px; background: #fafafa;
+            font-size: 18px; line-height: 1.6; display: flex; align-items: center; justify-content: center;
         }
         .controls { display: flex; flex-direction: column; gap: 12px; }
         button {
             padding: 15px; border: none; border-radius: 30px;
             background: var(--peace-blue); cursor: pointer;
             font-size: 16px; font-weight: bold; transition: 0.2s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
         button:hover { transform: translateY(-2px); filter: brightness(0.9); }
         .hero-btn { background: var(--primary-gold); color: #444; }
         .hidden { display: none !important; }
         
-        #result-overlay {
+        /* 慶祝大畫面 */
+        #celebration-overlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(255,255,255,0.95);
+            background: linear-gradient(135deg, #fff9c4 0%, #ffffff 100%);
             display: flex; flex-direction: column;
             justify-content: center; align-items: center;
-            border-radius: 20px; z-index: 100; padding: 20px;
+            border-radius: 20px; z-index: 200; padding: 20px;
+            animation: slideUp 0.5s ease-out;
         }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        
+        .medal { font-size: 80px; margin-bottom: 10px; animation: bounce 1s infinite; }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+
+        /* 紙屑特效 */
+        .confetti {
+            position: absolute; width: 10px; height: 10px; background: red;
+            animation: fall 3s linear forwards;
+        }
+        @keyframes fall { to { transform: translateY(600px) rotate(360deg); opacity: 0; } }
     </style>
 </head>
 <body>
 
 <div id="game-container">
-    <div style="font-size: 14px; color: #888; margin-bottom: 10px;">心靈的神奇潤滑劑</div>
+    <div style="font-size: 14px; color: #888; margin-bottom: 10px;">《心靈的神奇潤滑劑》互動練習</div>
     
     <div id="scene-image">
         <span id="char-emoji">😫</span>
@@ -71,29 +86,37 @@
     </div>
 
     <div id="dialog-box">
-        <p id="dialog-text">厚！媽媽！你是不是弄丟我的金色彩色筆了！你每次都亂動我東西！</p>
+        <p id="dialog-text">厚！媽媽！你是不是弄丟我的金色彩色筆了！你每次都亂動我東西！ [cite: 10]</p>
     </div>
 
     <div id="step1-controls" class="controls">
-        <button class="hero-btn" onclick="goToStep2()">✨ 使用「英雄變裝鏡」轉念</button>
+        <button class="hero-btn" onclick="goToStep2()">✨ 開啟變裝鏡 (轉念一秒鐘)</button>
     </div>
 
     <div id="step2-controls" class="controls hidden">
-        <p style="color: #666;">想像你要對誰說話？</p>
-        <button onclick="chooseHero('校長')">👨‍💼 敬愛的校長</button>
-        <button onclick="chooseHero('超人')">🦸‍♂️ 超人英雄</button>
+        <p style="color: #666;">想像你要對誰說話？ [cite: 15]</p>
+        <button onclick="chooseHero('校長')">👨‍💼 敬愛的校長 [cite: 15]</button>
+        <button onclick="chooseHero('超人')">🦸‍♂️ 超人英雄 [cite: 15]</button>
     </div>
 
     <div id="step3-controls" class="controls hidden">
-        <p style="color: #666;">換成 <span id="current-hero" style="font-weight:bold;"></span> 的語氣：</p>
-        <button onclick="showResult(false)">「快把筆交出來！」</button>
-        <button onclick="showResult(true)">「請幫幫我，我找不到筆了。」</button>
+        <p style="color: #666;">身為 <span id="current-hero" style="font-weight:bold; color:orange;"></span>，你會怎麼說？</p>
+        <button onclick="checkAnswer(false)">「快把筆給我！」</button>
+        <button onclick="checkAnswer(true)">「請幫幫我，我找不到筆了。」 [cite: 16]</button>
     </div>
 
-    <div id="result-overlay" class="hidden">
-        <h2 id="result-title"></h2>
-        <p id="result-msg" style="margin: 20px 0; color: #555;"></p>
-        <button onclick="location.reload()" style="background: #eee;">重新練習轉念</button>
+    <div id="celebration-overlay" class="hidden">
+        <div class="medal">🏆</div>
+        <h1 style="color: #f57c00; margin: 10px 0;">和諧達成！</h1>
+        <p style="font-size: 18px; color: #333; line-height: 1.6;">
+            <b>恭喜你！家裡的火藥味消失了！</b> <br>
+            你成功使用了「恭敬心」潤滑劑 [cite: 6]<br>
+            減少了摩擦，讓媽媽變成你的「隊友」！ [cite: 17, 21]
+        </p>
+        <div style="background: white; padding: 10px 20px; border-radius: 15px; border: 2px dashed #ffd700; margin: 15px 0;">
+            🎖️ 獲得獎勵：<b>【轉念小大師】勳章</b>
+        </div>
+        <button onclick="location.reload()" style="background: var(--success-green); color: white; width: 80%;">再挑戰一次</button>
     </div>
 </div>
 
@@ -102,16 +125,16 @@
     const scene = document.getElementById('scene-image');
     const charEmoji = document.getElementById('char-emoji');
     const dialogText = document.getElementById('dialog-text');
+    const gameContainer = document.getElementById('game-container');
 
-    // 初始火花
     function initSparks() {
         sparksContainer.innerHTML = '';
-        for(let i=0; i<6; i++) {
+        for(let i=0; i<8; i++) {
             const span = document.createElement('span');
             span.className = 'spark';
             span.innerText = '💥';
-            span.style.left = Math.random() * 80 + '%';
-            span.style.top = Math.random() * 80 + '%';
+            span.style.left = Math.random() * 85 + '%';
+            span.style.top = Math.random() * 85 + '%';
             sparksContainer.appendChild(span);
         }
     }
@@ -120,7 +143,7 @@
     function goToStep2() {
         document.getElementById('step1-controls').classList.add('hidden');
         document.getElementById('step2-controls').classList.remove('hidden');
-        dialogText.innerText = "「你想想看，如果你現在是對著校長或超人說話，你會用剛才那個語氣嗎？」";
+        dialogText.innerText = "媽媽說：如果你對著最尊敬的人，會用剛才那個語氣嗎？ [cite: 15]";
         charEmoji.innerText = "🤔";
     }
 
@@ -128,27 +151,32 @@
         document.getElementById('step2-controls').classList.add('hidden');
         document.getElementById('step3-controls').classList.remove('hidden');
         document.getElementById('current-hero').innerText = heroName;
-        
         charEmoji.innerText = heroName === '校長' ? '👨‍💼' : '🦸‍♂️';
-        scene.style.backgroundColor = "#fff9c4"; // 變金色
-        sparksContainer.innerHTML = ''; // 火花暫時消失
-        dialogText.innerText = "當你把對方當成重要的人，你會怎麼說出請求？";
+        scene.style.backgroundColor = "#fff9c4"; 
+        sparksContainer.innerHTML = ''; 
+        dialogText.innerText = "當你有了「恭敬心」，你會怎麼開口呢？ [cite: 17]";
     }
 
-    function showResult(isCorrect) {
-        const overlay = document.getElementById('result-overlay');
-        overlay.classList.remove('hidden');
-        
+    function checkAnswer(isCorrect) {
         if(isCorrect) {
-            document.getElementById('result-title').innerText = "🌟 和諧達成！";
-            document.getElementById('result-msg').innerText = "這就是「恭敬心」。你成功把指責換成了請求，家裡的火藥味消失了！";
-            scene.style.backgroundColor = "#c8e6c9";
-            charEmoji.innerText = "😊";
+            startCelebration();
         } else {
-            document.getElementById('result-title').innerText = "🧨 火花又冒出來了";
-            document.getElementById('result-msg').innerText = "即換了裝，語氣不對還是會產生摩擦喔。再試一次看看「轉念」的力量！";
-            scene.style.backgroundColor = "#ffcdd2";
-            charEmoji.innerText = "😠";
+            alert("哎呀！火花又冒出來了！再想一下，英雄會怎麼有禮貌地請求呢？");
+        }
+    }
+
+    function startCelebration() {
+        document.getElementById('celebration-overlay').classList.remove('hidden');
+        // 產生紙屑
+        for(let i=0; i<50; i++) {
+            setTimeout(() => {
+                const c = document.createElement('div');
+                c.className = 'confetti';
+                c.style.left = Math.random() * 100 + '%';
+                c.style.backgroundColor = ['#ffd700', '#ff4081', '#00e676', '#2979ff'][Math.floor(Math.random()*4)];
+                gameContainer.appendChild(c);
+                setTimeout(() => c.remove(), 3000);
+            }, i * 50);
         }
     }
 </script>
